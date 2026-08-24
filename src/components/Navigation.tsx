@@ -1,204 +1,139 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ArrowRight } from 'lucide-react'
-import { useScrollProgress } from '../hooks/useScrollAnimation'
+import React, { useEffect, useState } from 'react'
+import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
+import { ArrowUpRight, Menu, X } from 'lucide-react'
+
+const NAV_ITEMS = [
+  { label: 'Services', href: '#services' },
+  { label: 'Work', href: '#work' },
+  { label: 'Process', href: '#process' },
+  { label: 'Clients', href: '#clients' },
+]
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const scrollProgress = useScrollProgress()
+
+  // Real scroll progress: useScroll drives a motion value, so the bar actually
+  // repaints as you scroll (a plain ref would never re-render).
+  const { scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 300, damping: 40, mass: 0.2 })
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    const onScroll = () => setIsScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const navItems = [
-    { name: 'Services', href: '#services' },
-    { name: 'Portfolio', href: '#portfolio' },
-    { name: 'About', href: '#about' },
-    { name: 'Testimonials', href: '#testimonials' },
-    { name: 'Contact', href: '#contact' },
-  ]
-
-  const handleNavClick = (href: string) => {
-    setIsOpen(false)
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+  // Lock body scroll while the mobile sheet is open.
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
     }
-  }
+  }, [isOpen])
+
+  // Close the mobile sheet on Escape.
+  useEffect(() => {
+    if (!isOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isOpen])
 
   return (
     <>
-      {/* Scroll Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600 origin-left z-50"
-        style={{
-          scaleX: typeof window !== 'undefined' 
-            ? window.getComputedStyle(document.documentElement).getPropertyValue('--scroll-progress') || 0
-            : 0
-        }}
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: scrollProgress.current }}
-        transition={{ type: "spring", stiffness: 400, damping: 40 }}
+        className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left bg-acid"
+        style={{ scaleX: progress }}
       />
 
-      {/* Navigation Bar */}
-      <motion.nav
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled 
-            ? 'glass backdrop-blur-xl border-b border-white/10' 
-            : 'bg-transparent'
+      <header
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-200 ${
+          isScrolled ? 'border-line bg-ink/95 backdrop-saturate-150' : 'border-transparent bg-transparent'
         }`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 400, damping: 40 }}
       >
-        <div className="container-custom">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <motion.div
-              className="flex items-center space-x-2"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">A</span>
-              </div>
-              <span className="text-2xl font-display font-bold text-gradient">
-                AgencyPro
-              </span>
-            </motion.div>
+        <nav className="wrap flex h-20 items-center justify-between gap-8">
+          <a
+            href="#top"
+            className="font-display text-xl uppercase tracking-crush text-paper transition-colors hover:text-acid"
+          >
+            Signal<span className="text-acid">®</span>
+          </a>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-8">
-              {navItems.map((item, index) => (
-                <motion.button
-                  key={item.name}
-                  onClick={() => handleNavClick(item.href)}
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ y: -2 }}
+          <ul className="hidden items-center gap-9 lg:flex">
+            {NAV_ITEMS.map((item, i) => (
+              <li key={item.href}>
+                <a
+                  href={item.href}
+                  className="group flex items-baseline gap-2 font-mono text-xs uppercase tracking-[0.18em] text-muted transition-colors hover:text-paper"
                 >
-                  {item.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300" />
-                </motion.button>
-              ))}
-            </div>
+                  <span className="text-[10px] text-line transition-colors group-hover:text-acid">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
 
-            {/* CTA Button */}
-            <div className="hidden lg:flex items-center space-x-4">
-              <motion.button
-                className="btn-primary"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                Get Started
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </motion.button>
-            </div>
+          <div className="flex items-center gap-3">
+            <a href="#contact" className="btn-acid hidden sm:inline-flex">
+              Start a project
+              <ArrowUpRight size={14} strokeWidth={2.5} />
+            </a>
 
-            {/* Mobile Menu Button */}
-            <motion.button
-              className="lg:hidden p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
-              onClick={() => setIsOpen(!isOpen)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
+              type="button"
+              onClick={() => setIsOpen((v) => !v)}
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+              className="flex h-11 w-11 items-center justify-center border border-line text-paper transition-colors hover:border-acid hover:text-acid lg:hidden"
             >
-              <AnimatePresence mode="wait">
-                {isOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X className="w-6 h-6 text-gray-700" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Menu className="w-6 h-6 text-gray-700" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+              {isOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
-        </div>
-      </motion.nav>
+        </nav>
+      </header>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-30 lg:hidden"
+            key="sheet"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.15, ease: 'linear' }}
+            className="fixed inset-0 z-40 bg-ink pt-20 lg:hidden"
           >
-            {/* Backdrop */}
-            <motion.div
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-            />
-
-            {/* Menu Content */}
-            <motion.div
-              className="absolute top-20 left-4 right-4 glass rounded-2xl p-6 border border-white/20"
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            >
-              <div className="space-y-4">
-                {navItems.map((item, index) => (
-                  <motion.button
-                    key={item.name}
-                    onClick={() => handleNavClick(item.href)}
-                    className="block w-full text-left py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-white/10 rounded-xl transition-all duration-200 font-medium"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ x: 10 }}
+            <div className="rule" />
+            <ul className="flex flex-col">
+              {NAV_ITEMS.map((item, i) => (
+                <li key={item.href} className="border-b border-line">
+                  <a
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="wrap flex items-center justify-between py-7 text-paper transition-colors hover:bg-acid hover:text-ink"
                   >
-                    {item.name}
-                  </motion.button>
-                ))}
-                <motion.button
-                  className="btn-primary w-full mt-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: navItems.length * 0.1 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Get Started
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </motion.button>
-              </div>
-            </motion.div>
+                    <span className="display-3">{item.label}</span>
+                    <span className="font-mono text-xs text-muted">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <div className="wrap pt-10">
+              <a href="#contact" onClick={() => setIsOpen(false)} className="btn-acid w-full">
+                Start a project
+                <ArrowUpRight size={14} strokeWidth={2.5} />
+              </a>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -206,4 +141,4 @@ const Navigation = () => {
   )
 }
 
-export default Navigation 
+export default Navigation
