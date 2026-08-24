@@ -1,287 +1,131 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Play, Star, Zap, TrendingUp } from 'lucide-react'
-import { useFadeInAnimation } from '../hooks/useScrollAnimation'
+import { ArrowDown, ArrowUpRight } from 'lucide-react'
+
+const HEADLINE = ['Cut', 'Through', 'The Noise']
+
+const STATS = [
+  { value: '+312%', label: 'Avg. return on ad spend' },
+  { value: '48', label: 'Brands scaled since 2019' },
+  { value: '$24M', label: 'Media budget managed' },
+  { value: '11', label: 'Industry awards' },
+]
+
+const TICKER = [
+  'Brand Strategy',
+  'Performance Media',
+  'Content Systems',
+  'Creative Direction',
+  'Lifecycle & CRM',
+  'Analytics',
+]
+
+// Snappy, mechanical easing — deliberately not the floaty spring feel.
+const EASE = [0.22, 1, 0.36, 1] as const
 
 const HeroSection = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const heroRef = useFadeInAnimation(0)
-
-  // Particle animation effect
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-
-    resizeCanvas()
-    window.addEventListener('resize', resizeCanvas)
-
-    const particles: Array<{
-      x: number
-      y: number
-      vx: number
-      vy: number
-      size: number
-      opacity: number
-    }> = []
-
-    // Create particles
-    for (let i = 0; i < 100; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.5 + 0.2,
-      })
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      particles.forEach((particle) => {
-        particle.x += particle.vx
-        particle.y += particle.vy
-
-        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1
-        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1
-
-        ctx.beginPath()
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(103, 126, 234, ${particle.opacity})`
-        ctx.fill()
-      })
-
-      requestAnimationFrame(animate)
-    }
-
-    animate()
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas)
-    }
-  }, [])
-
-  const textAnimation = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.25, 0, 1],
-      },
-    },
-  }
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  }
-
   return (
-    <section 
-      ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"
-    >
-      {/* Animated Background Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none"
-        style={{ zIndex: 1 }}
+    <section id="top" className="relative min-h-screen overflow-hidden border-b border-line pt-20">
+      <div className="pointer-events-none absolute inset-0 grid-lines opacity-40" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink"
+        aria-hidden="true"
       />
 
-      {/* Background Gradient Orbs */}
-      <div className="absolute inset-0" style={{ zIndex: 2 }}>
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full opacity-20 blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-20 blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-      </div>
+      <div className="wrap relative flex min-h-[calc(100vh-5rem)] flex-col justify-between py-14">
+        <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, ease: 'linear' }}
+            className="flex items-center gap-3"
+          >
+            <span className="h-2 w-2 animate-blink bg-acid" aria-hidden="true" />
+            <span className="eyebrow">Creative &amp; performance studio — est. 2019</span>
+          </motion.div>
 
-      {/* Content */}
-      <div className="relative z-10 container-custom text-center">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="max-w-5xl mx-auto"
-        >
-          {/* Badge */}
-          <motion.div variants={textAnimation} className="mb-8">
-            <div className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full">
-              <Star className="w-4 h-4 text-yellow-500 mr-2" />
-              <span className="text-sm font-medium text-gray-700">
-                #1 Digital Marketing Agency 2025
+          <h1 className="mt-10">
+            {HEADLINE.map((line, i) => (
+              <span key={line} className="block overflow-hidden">
+                <motion.span
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.1 + i * 0.09, ease: EASE }}
+                  className={`display-1 block ${i === 2 ? 'text-acid' : 'text-paper'}`}
+                >
+                  {line}
+                </motion.span>
               </span>
+            ))}
+          </h1>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.45, ease: EASE }}
+            className="mt-12 grid gap-10 border-t border-line pt-10 lg:grid-cols-[1.1fr_1fr]"
+          >
+            <p className="lede max-w-2xl">
+              We build brands that are impossible to scroll past — then run the media that
+              proves it worked. No vanity metrics, no 40-slide decks. Just work that moves
+              the number you actually care about.
+            </p>
+
+            <div className="flex flex-wrap items-start gap-3 lg:justify-end">
+              <a href="#contact" className="btn-acid">
+                Start a project
+                <ArrowUpRight size={14} strokeWidth={2.5} />
+              </a>
+              <a href="#work" className="btn-outline">
+                See the work
+              </a>
             </div>
           </motion.div>
+        </div>
 
-          {/* Main Headline */}
-          <motion.h1
-            variants={textAnimation}
-            className="heading-xl text-gray-900 mb-6"
-          >
-            Transform Your Brand with{' '}
-            <span className="text-gradient">
-              Next-Gen Marketing
-            </span>
-          </motion.h1>
+        <motion.dl
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.6, ease: 'linear' }}
+          className="mt-16 grid grid-cols-2 border-l border-t border-line lg:grid-cols-4"
+        >
+          {STATS.map((stat) => (
+            <div key={stat.label} className="border-b border-r border-line p-6">
+              <dt className="font-display text-3xl tracking-crush text-paper lg:text-5xl">
+                {stat.value}
+              </dt>
+              <dd className="eyebrow mt-3 leading-relaxed">{stat.label}</dd>
+            </div>
+          ))}
+        </motion.dl>
 
-          {/* Subheadline */}
-          <motion.p
-            variants={textAnimation}
-            className="text-body max-w-3xl mx-auto mb-12"
-          >
-            We create immersive digital experiences that captivate audiences, 
-            drive conversions, and accelerate business growth. From brand strategy 
-            to cutting-edge campaigns, we&apos;re your partners in digital excellence.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            variants={textAnimation}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-          >
-            <motion.button
-              className="btn-primary"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Start Your Project
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </motion.button>
-            
-            <motion.button
-              className="btn-secondary group"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
-              Watch Our Story
-            </motion.button>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            variants={textAnimation}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto"
-          >
-            {[
-              { icon: TrendingUp, value: '300%', label: 'Average ROI Increase' },
-              { icon: Zap, value: '2.5M+', label: 'Campaigns Launched' },
-              { icon: Star, value: '500+', label: 'Happy Clients' },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                className="glass rounded-2xl p-6 border border-white/20"
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              >
-                <stat.icon className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                <div className="text-3xl font-bold text-gray-900 mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
+        <div className="mt-12 flex items-center gap-3 text-muted">
+          <ArrowDown size={14} className="animate-bounce" aria-hidden="true" />
+          <span className="eyebrow">Scroll</span>
+        </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-      >
-        <motion.div
-          className="flex flex-col items-center cursor-pointer group"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          onClick={() => {
-            const servicesSection = document.querySelector('#services')
-            if (servicesSection) {
-              servicesSection.scrollIntoView({ behavior: 'smooth' })
-            }
-          }}
-        >
-          <span className="text-sm text-gray-500 mb-2 group-hover:text-blue-600 transition-colors">
-            Scroll to explore
-          </span>
-          <div className="w-6 h-10 border-2 border-gray-300 rounded-full flex justify-center group-hover:border-blue-600 transition-colors">
-            <motion.div
-              className="w-1 h-3 bg-gray-400 rounded-full mt-2 group-hover:bg-blue-600"
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Floating Elements */}
-      <motion.div
-        className="absolute top-1/4 left-16 hidden lg:block"
-        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 4, repeat: Infinity }}
-      >
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl opacity-80" />
-      </motion.div>
-      
-      <motion.div
-        className="absolute top-1/3 right-16 hidden lg:block"
-        animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
-        transition={{ duration: 6, repeat: Infinity }}
-      >
-        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full opacity-60" />
-      </motion.div>
-      
-      <motion.div
-        className="absolute bottom-1/3 left-1/4 hidden lg:block"
-        animate={{ y: [0, -15, 0], x: [0, 10, 0] }}
-        transition={{ duration: 5, repeat: Infinity }}
-      >
-        <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg opacity-70" />
-      </motion.div>
+      {/* Edge-to-edge ticker */}
+      <div className="relative overflow-hidden border-t border-line bg-surface py-4 pause-on-hover">
+        <div className="flex w-max animate-marquee items-center">
+          {[0, 1].map((copy) => (
+            <div key={copy} className="flex items-center" aria-hidden={copy === 1}>
+              {TICKER.map((item) => (
+                <span key={item} className="flex items-center">
+                  <span className="px-6 font-mono text-xs uppercase tracking-[0.22em] text-muted">
+                    {item}
+                  </span>
+                  <span className="h-1 w-1 bg-acid" />
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   )
 }
 
-export default HeroSection 
+export default HeroSection
