@@ -1,32 +1,50 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Archivo_Black, Inter, IBM_Plex_Mono } from 'next/font/google'
+import './globals.css'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const display = Archivo_Black({
+  variable: '--font-display',
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+})
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const sans = Inter({
+  variable: '--font-sans',
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+const mono = IBM_Plex_Mono({
+  variable: '--font-mono',
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: "AgencyPro - Transform Your Brand with Next-Gen Marketing",
-  description: "We create immersive digital experiences that captivate audiences, drive conversions, and accelerate business growth. From brand strategy to cutting-edge campaigns, we're your partners in digital excellence.",
-};
+  title: 'SIGNAL® — Cut Through The Noise',
+  description:
+    'SIGNAL is a creative and performance marketing studio. We build brands that are impossible to scroll past, and campaigns that can be measured to the last cent.',
+  keywords: ['marketing agency', 'brand strategy', 'performance marketing', 'creative studio'],
+  openGraph: {
+    title: 'SIGNAL® — Cut Through The Noise',
+    description:
+      'A creative and performance marketing studio building brands that are impossible to scroll past.',
+    type: 'website',
+  },
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${display.variable} ${sans.variable} ${mono.variable} bg-ink text-paper`}>
         {children}
       </body>
     </html>
-  );
+  )
 }
