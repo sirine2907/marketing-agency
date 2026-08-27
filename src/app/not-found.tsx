@@ -1,21 +1,31 @@
 import Link from 'next/link'
 
+export const metadata = {
+  title: 'Lost signal — 404',
+}
+
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Page Not Found</h2>
-        <p className="text-gray-600 mb-8">
-          The page you&apos;re looking for doesn&apos;t exist.
+    <main className="relative flex min-h-screen items-center overflow-hidden border-b border-line">
+      <div className="pointer-events-none absolute inset-0 grid-lines opacity-30" aria-hidden="true" />
+
+      <div className="wrap relative">
+        <span className="eyebrow">Error — 404</span>
+
+        <h1 className="display-1 mt-8 text-paper">
+          Lost
+          <br />
+          <span className="text-acid">signal</span>
+        </h1>
+
+        <p className="lede mt-10 max-w-md">
+          That page does not exist, moved, or never did. Nothing personal.
         </p>
-        <Link
-          href="/"
-          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
-        >
-          Go Home
+
+        <Link href="/" className="btn-acid mt-12">
+          Back to safety
         </Link>
       </div>
-    </div>
+    </main>
   )
-} 
+}

@@ -1,217 +1,98 @@
-# 🚀 AgencyPro - Modern Marketing Agency Landing Page
+# SIGNAL®
 
-A stunning, high-performance landing page for a digital marketing agency built with Next.js 15, Tailwind CSS, and cutting-edge animations. This project showcases the latest 2025 web design trends including glassmorphism, smooth scroll animations, particle effects, and immersive user experiences.
+A dark brutalist landing page for a fictional creative and performance marketing
+studio. Built as a hands-on way into modern React and Next.js.
 
-## ✨ Features
+> Started life as a cloned Next.js template and was rebuilt section by section —
+> new brand, new design system, new components, new copy.
 
-### 🎨 Modern Design Trends (2025)
-- **Glassmorphism Effects**: Beautiful frosted glass UI elements with backdrop blur
-- **Smooth Scroll Animations**: GSAP-powered scroll-triggered animations
-- **Particle Systems**: Interactive particle backgrounds for immersive experiences
-- **Gradient Mesh Backgrounds**: Dynamic animated gradient overlays
-- **Micro-interactions**: Delightful hover effects and button animations
-- **Dynamic Typography**: Large, bold typography with gradient text effects
+## Stack
 
-### 🎭 User Experience
-- **Responsive Design**: Optimized for all devices (mobile-first approach)
-- **Dynamic Navigation**: Glassmorphism navbar with scroll progress indicator
-- **Smooth Transitions**: Framer Motion animations throughout
-- **Interactive Elements**: Hover effects, animated buttons, and scroll indicators
-- **Performance Optimized**: Fast loading with lazy loading and code splitting
+| Concern    | Choice                          |
+| ---------- | ------------------------------- |
+| Framework  | Next.js 15 (App Router)         |
+| Language   | TypeScript 5                    |
+| UI         | React 19                        |
+| Styling    | Tailwind CSS 3.4                |
+| Motion     | Framer Motion 12                |
+| Icons      | Lucide React                    |
+| Fonts      | Archivo Black / Inter / IBM Plex Mono |
 
-### 🛠 Technical Features
-- **Next.js 15**: Latest React framework with App Router
-- **Tailwind CSS**: Utility-first CSS framework with custom design system
-- **TypeScript**: Full type safety and better developer experience
-- **GSAP + ScrollTrigger**: Professional-grade scroll animations
-- **Framer Motion**: React animation library for UI transitions
-- **Three.js Ready**: Prepared for 3D elements and WebGL effects
-- **Custom Hooks**: Reusable animation and scroll logic
+## Running it
 
-## 🎯 Sections
+Requires Node.js 18 or newer.
 
-1. **Hero Section**
-   - Animated particle background
-   - Gradient text effects
-   - Call-to-action buttons
-   - Statistics showcase
-   - Scroll indicator
-
-2. **Services Section**
-   - Service cards with hover effects
-   - Icon animations
-   - Feature lists
-   - Call-to-action panel
-
-3. **About Section**
-   - Company story and values
-   - Animated timeline
-   - Statistics counters
-   - Team highlights
-
-4. **Testimonials Section**
-   - Client testimonials carousel
-   - Star ratings
-   - Company logos
-   - Interactive navigation
-
-5. **Footer**
-   - Newsletter signup
-   - Contact information
-   - Social media links
-   - Company links
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- Git
-
-### Installation
-
-1. **Clone the repository**
-```bash
-git clone <repository-url>
-cd landing_page
-```
-
-2. **Install dependencies**
 ```bash
 npm install
-```
-
-3. **Start development server**
-```bash
 npm run dev
 ```
 
-4. **Open your browser**
-Navigate to `http://localhost:3000`
+Then open <http://localhost:3000>.
 
-## 📁 Project Structure
+| Script          | Does                                  |
+| --------------- | ------------------------------------- |
+| `npm run dev`   | Dev server with hot reload            |
+| `npm run build` | Production build, exported to `out/`  |
+| `npm start`     | Serve a production build              |
+| `npm run lint`  | ESLint                                |
+
+If the build dies with `memory allocation ... failed`, the machine is short on
+RAM rather than the code being wrong. Cap the heap and retry:
+
+```bash
+NODE_OPTIONS="--max-old-space-size=2048" npm run build
+```
+
+## Design system
+
+Everything is driven by tokens in `tailwind.config.js` and component classes in
+`src/app/globals.css`.
+
+| Token     | Value     | Used for                   |
+| --------- | --------- | -------------------------- |
+| `ink`     | `#0A0A0A` | Page background            |
+| `surface` | `#141414` | Alternating section bands  |
+| `paper`   | `#FAFAFA` | Primary text               |
+| `muted`   | `#8A8A8A` | Secondary text             |
+| `line`    | `#2A2A2A` | Hairline borders           |
+| `acid`    | `#D0FF14` | The single accent          |
+
+House rules the whole page follows:
+
+- **No border radius.** The scale is overridden to `0`.
+- **No blur.** No glassmorphism, no soft glows — hard offset shadows instead.
+- **One accent.** Acid lime, used sparingly enough to still mean something.
+- **Structure is visible.** Hairline borders and grid lines do the layout work.
+- **Motion is mechanical.** Short durations, sharp easing, no floaty springs.
+- `prefers-reduced-motion` is respected globally.
+
+## Layout
 
 ```
 src/
 ├── app/
-│   ├── globals.css          # Global styles and Tailwind
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx            # Main landing page
-├── components/
-│   ├── Navigation.tsx       # Dynamic navigation bar
-│   ├── HeroSection.tsx     # Hero with particles
-│   ├── ServicesSection.tsx # Services showcase
-│   ├── AboutSection.tsx    # Company story
-│   ├── TestimonialsSection.tsx # Client reviews
-│   └── Footer.tsx          # Footer with newsletter
-├── hooks/
-│   └── useScrollAnimation.ts # Custom animation hooks
-└── utils/
-    └── (utility functions)
+│   ├── globals.css        design tokens and component classes
+│   ├── layout.tsx         fonts, metadata, root shell
+│   ├── not-found.tsx      404
+│   └── page.tsx           composes the sections
+└── components/
+    ├── Navigation.tsx     fixed nav, scroll progress, mobile sheet
+    ├── HeroSection.tsx    headline, stats, service ticker
+    ├── ServicesSection.tsx six-cell service grid
+    ├── WorkSection.tsx    case studies as an index table
+    ├── ProcessSection.tsx four stages plus studio facts
+    ├── TestimonialsSection.tsx quote carousel and client marquee
+    └── Footer.tsx         contact slab and footer
 ```
 
-## 🎨 Design System
+## Notes
 
-### Colors
-- **Primary**: Blue gradient (50-900)
-- **Accent**: Purple gradient (50-900) 
-- **Neutral**: Gray scale (50-900)
-- **Gradients**: Blue to purple, purple to pink
+- The site is a **static export** (`output: 'export'` in `next.config.ts`), so it
+  builds to plain HTML/CSS/JS in `out/` and needs no server.
+- The newsletter field confirms locally only. It has no backend behind it yet —
+  removing `output: 'export'` and adding a route handler is the next step.
+- All names, metrics, testimonials and case studies are invented.
 
-### Typography
-- **Display Font**: Space Grotesk (headings)
-- **Body Font**: Inter (content)
-- **Mono Font**: JetBrains Mono (code)
+## License
 
-### Components
-- **Buttons**: Primary, secondary, ghost variants
-- **Cards**: Glassmorphism effects with hover animations
-- **Sections**: Consistent padding and spacing
-- **Animations**: Smooth transitions and micro-interactions
-
-## 🔧 Customization
-
-### Changing Colors
-Edit `tailwind.config.js` to modify the color palette:
-
-```javascript
-colors: {
-  primary: {
-    // Your brand colors
-  },
-  accent: {
-    // Secondary colors
-  }
-}
-```
-
-### Adding New Sections
-1. Create a new component in `src/components/`
-2. Import and add to `src/app/page.tsx`
-3. Add navigation link in `Navigation.tsx`
-
-### Modifying Animations
-- Edit animation settings in `src/hooks/useScrollAnimation.ts`
-- Adjust Framer Motion variants in components
-- Customize GSAP timelines for scroll effects
-
-## 📱 Responsive Design
-
-- **Mobile First**: Optimized for mobile devices
-- **Breakpoints**: sm (640px), md (768px), lg (1024px), xl (1280px)
-- **Touch Friendly**: Large tap targets and smooth interactions
-- **Performance**: Optimized images and lazy loading
-
-## 🔮 Technologies Used
-
-- **Framework**: Next.js 15
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion, GSAP
-- **Icons**: Lucide React
-- **Fonts**: Google Fonts
-- **Images**: Unsplash (demo images)
-- **Development**: TypeScript, ESLint
-
-## 🎯 Performance
-
-- **Lighthouse Score**: 95+ on all metrics
-- **Core Web Vitals**: Optimized for LCP, FID, CLS
-- **Bundle Size**: Optimized with code splitting
-- **Images**: WebP format with responsive loading
-- **Fonts**: Optimized loading with font-display: swap
-
-## 🌟 Advanced Features
-
-### Particle System
-Custom Canvas-based particle animation in the hero section with configurable parameters.
-
-### Scroll Progress
-Dynamic scroll progress bar in the navigation with smooth animations.
-
-### Glassmorphism
-Consistent glass effect implementation across components with backdrop filters.
-
-### Micro-interactions
-Subtle animations for buttons, cards, and interactive elements.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
-## 📞 Support
-
-For support or questions, please contact:
-- Email: hello@agencypro.com
-- Website: [agencypro.com](https://agencypro.com)
-
----
-
-**Built with ❤️ using the latest web technologies and design trends for 2025**
+MIT
