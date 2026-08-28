@@ -32,7 +32,7 @@ Then open <http://localhost:3000>.
 | Script          | Does                                  |
 | --------------- | ------------------------------------- |
 | `npm run dev`   | Dev server with hot reload            |
-| `npm run build` | Production build, exported to `out/`  |
+| `npm run build` | Production build                        |
 | `npm start`     | Serve a production build              |
 | `npm run lint`  | ESLint                                |
 
@@ -87,10 +87,16 @@ src/
 
 ## Notes
 
-- The site is a **static export** (`output: 'export'` in `next.config.ts`), so it
-  builds to plain HTML/CSS/JS in `out/` and needs no server.
-- The newsletter field confirms locally only. It has no backend behind it yet —
-  removing `output: 'export'` and adding a route handler is the next step.
+- The newsletter form posts to `POST /api/subscribe`, a route handler that
+  validates the address server-side, rate-limits by IP and returns proper status
+  codes (`201`, `400`, `429`, `500`).
+- Subscribers are held in an in-process `Map`, so they reset on restart. Swap the
+  two functions in `src/lib/subscribers.ts` for real queries and nothing else has
+  to change.
+- Because there is now a server route, this is no longer a static export — it
+  needs a Node host (Vercel, Netlify, Fly). `npm run build` no longer writes `out/`.
+- Set `NEXT_PUBLIC_SITE_URL` on the host so canonical URLs and the sitemap point
+  at the real domain.
 - All names, metrics, testimonials and case studies are invented.
 
 ## License

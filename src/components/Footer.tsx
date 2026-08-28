@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { ArrowUpRight, Check } from 'lucide-react'
+import { ArrowUpRight, Check, Loader2 } from 'lucide-react'
 
 const STUDIOS = [
   { city: 'London', line: '14 Bevis Marks, EC3A 7BA' },
@@ -30,17 +30,42 @@ const COLUMNS = [
   },
 ]
 
+type Status = 'idle' | 'loading' | 'success' | 'error'
+
 const Footer = () => {
   const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState<Status>('idle')
+  const [message, setMessage] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email) return
-    // No backend yet — this only confirms locally. Point it at a real
-    // endpoint (e.g. POST /api/subscribe) once one exists.
-    setSent(true)
-    setEmail('')
+    if (status === 'loading') return
+
+    setStatus('loading')
+    setMessage('')
+
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = (await response.json()) as { message?: string; error?: string }
+
+      if (!response.ok) {
+        setStatus('error')
+        setMessage(data.error ?? 'Something went wrong. Try again.')
+        return
+      }
+
+      setStatus('success')
+      setMessage(data.message ?? 'Noted — talk soon.')
+      setEmail('')
+    } catch {
+      setStatus('error')
+      setMessage('Could not reach the server. Check your connection.')
+    }
   }
 
   return (
@@ -74,7 +99,7 @@ const Footer = () => {
                 +44 20 7946 0812
               </p>
 
-              <form onSubmit={handleSubmit} className="mt-14 max-w-md">
+              <form onSubmit={handleSubmit} noValidate className="mt-14 max-w-md">
                 <label
                   htmlFor="newsletter-email"
                   className="eyebrow block"
@@ -82,26 +107,46 @@ const Footer = () => {
                   Monthly dispatch — no fluff, unsubscribe anytime
                 </label>
 
-                <div className="mt-4 flex border border-line focus-within:border-acid">
+                <div
+                  className={`mt-4 flex border transition-colors ${
+                    status === 'error' ? 'border-paper' : 'border-line focus-within:border-acid'
+                  }`}
+                >
                   <input
                     id="newsletter-email"
+                    name="email"
                     type="email"
+                    autoComplete="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value)
+                      if (status !== 'idle') setStatus('idle')
+                    }}
+                    aria-invalid={status === 'error'}
+                    aria-describedby="newsletter-status"
                     placeholder="you@company.com"
                     className="min-w-0 flex-1 bg-transparent px-4 py-4 font-mono text-xs text-paper placeholder:text-muted focus:outline-none"
                   />
                   <button
                     type="submit"
-                    className="shrink-0 border-l border-line bg-acid px-6 font-mono text-xs uppercase tracking-[0.18em] text-ink transition-opacity hover:opacity-80"
+                    disabled={status === 'loading'}
+                    className="flex shrink-0 items-center justify-center border-l border-line bg-acid px-6 font-mono text-xs uppercase tracking-[0.18em] text-ink transition-opacity hover:opacity-80 disabled:opacity-50"
                   >
-                    {sent ? <Check size={14} strokeWidth={3} /> : 'Join'}
+                    {status === 'loading' && <Loader2 size={14} className="animate-spin" />}
+                    {status === 'success' && <Check size={14} strokeWidth={3} />}
+                    {(status === 'idle' || status === 'error') && 'Join'}
                   </button>
                 </div>
 
-                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted" aria-live="polite">
-                  {sent ? 'Noted — talk soon.' : ' '}
+                <p
+                  id="newsletter-status"
+                  aria-live="polite"
+                  className={`mt-3 min-h-[1rem] font-mono text-[10px] uppercase tracking-[0.16em] ${
+                    status === 'error' ? 'text-paper' : 'text-muted'
+                  }`}
+                >
+                  {message}
                 </p>
               </form>
             </div>
