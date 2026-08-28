@@ -35,6 +35,8 @@ Then open <http://localhost:3000>.
 | `npm run build` | Production build                        |
 | `npm start`     | Serve a production build              |
 | `npm run lint`  | ESLint                                |
+| `npm test`      | Run the test suite once               |
+| `npm run test:watch` | Tests in watch mode              |
 
 If the build dies with `memory allocation ... failed`, the machine is short on
 RAM rather than the code being wrong. Cap the heap and retry:
