@@ -1,5 +1,7 @@
 # SIGNAL®
 
+[![CI](https://github.com/sirine2907/marketing-agency/actions/workflows/ci.yml/badge.svg)](https://github.com/sirine2907/marketing-agency/actions/workflows/ci.yml)
+
 A dark brutalist landing page for a fictional creative and performance marketing
 studio. Built as a hands-on way into modern React and Next.js.
 
