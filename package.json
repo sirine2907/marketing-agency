@@ -36,5 +36,8 @@
     "typescript": "^5",
     "vitest": "^2.1.9"
   },
-  "description": "SIGNAL - a dark brutalist landing page for a creative and performance marketing studio."
+  "description": "SIGNAL - a dark brutalist landing page for a creative and performance marketing studio.",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  }
 }

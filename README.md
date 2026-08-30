@@ -22,7 +22,8 @@ studio. Built as a hands-on way into modern React and Next.js.
 
 ## Running it
 
-Requires Node.js 18 or newer.
+Requires Node.js 22.22+ or 24.15+ (jsdom, used by the test suite, sets the
+floor). A `.nvmrc` is included — run `nvm use` if you use nvm.
 
 ```bash
 npm install
