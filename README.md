@@ -8,6 +8,18 @@ studio. Built as a hands-on way into modern React and Next.js.
 > Started life as a cloned Next.js template and was rebuilt section by section —
 > new brand, new design system, new components, new copy.
 
+## Screenshots
+
+![Hero](docs/screenshots/hero.png)
+
+| Services | Selected work |
+| -------- | ------------- |
+| ![Services](docs/screenshots/services.png) | ![Selected work](docs/screenshots/work.png) |
+| **Process** | **Testimonials** |
+| ![Process](docs/screenshots/process.png) | ![Testimonials](docs/screenshots/clients.png) |
+| **Contact** | **Mobile** |
+| ![Contact](docs/screenshots/contact.png) | <img src="docs/screenshots/mobile.png" alt="Mobile" width="240"> |
+
 ## Stack
 
 | Concern    | Choice                          |
